@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rafi Allen | Engineering Portfolio</title>
+  <style>
+    body {
+      max-width: 44rem;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem;
+      background: #faf9f6;
+      color: #19252c;
+      font-family: system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3, h4 { line-height: 1.2; }
+    h1 { margin-bottom: .25rem; }
+    header p { margin-top: 0; }
+    section { margin-top: 2.25rem; }
+
+    article {
+      margin-block: 1rem;
+      padding: .25rem 1rem;
+      border-left: 3px solid #327773;
+      background: #fff;
+    }
+
+    a {
+      color: #205f5b;
+      overflow-wrap: anywhere;
+    }
+
+    .table-scroll {
+      margin-block: 1rem;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 28rem;
+      border-collapse: collapse;
+    }
+
+    caption {
+      padding-bottom: .5rem;
+      text-align: left;
+      font-weight: 650;
+    }
+
+    th, td {
+      padding: .5rem .65rem;
+      border-bottom: 1px solid #d6e0de;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    thead { background: #edf4f3; }
+    tbody td { white-space: nowrap; }
+    figure { margin: 1.25rem 0; }
+    img { display: block; max-width: 100%; height: auto; }
+    figcaption { margin-top: .5rem; font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Rafi Allen</h1>
+    <p>Electrical Engineering · Robotics &amp; Controls</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>About me</h2>
+
+      <p>Hello! My name is Rafi Allen, and I am a 4th-year student at California Polytechnic State University, San Luis Obispo, graduating with a B.S. in Electrical Engineering in May 2027. During my time at Cal Poly, I developed a strong interest in robotics, controls, and autonomous systems through coursework, projects, and research. Through my work, I have found that my favorite part of problem-solving is using theory to help guide my designs and solutions, then testing them on real hardware and refining them based on the results.</p>
+
+      <p>I like breaking down the problems I’m trying to solve, figuring out what should happen theoretically, and seeing results unfold, explaining what is happening during the test. If a MAV drifts when I expect it to fly straight, I want to know the causes and why that happens. That curiosity runs through all my projects, from testing flight controllers in simulation and on hardware to evaluating reinforcement learning policies, working on vision for a robotic arm, and developing an excitation monitor for multi-MAV cooperative localization. I’m interested in roles where I can build solutions, test them on real systems, and use the findings to tune and improve them.</p>
+    </section>
+
+    <section>
+      <h2>Projects</h2>
+
+      <article>
+        <h3>Crazyflie Flight Control: From Simulation to Hardware</h3>
+        <p>Summer Undergraduate Research Program (SURP) · Cal Poly San Luis Obispo</p>
+
+        <p><strong>Goal.</strong> Take a controller tuned in simulation and test whether a physical Crazyflie could climb 1 meter, fly forward 1 meter, and land.</p>
+
+        <p><strong>Work.</strong> I developed and tuned a cascaded PID flight controller, building on an existing extended Kalman filter (EKF) and flight-tracking framework from prior research. In Isaac Lab, I used a digital twin of Bitcraze’s Crazyflie 2.1+ micro aerial vehicle (MAV) to test the full flight sequence: climb to 1 m, hover, fly forward 1 m, and land.</p>
+
+        <p>After the controller completed the sequence in simulation, I transferred the control logic to the physical Crazyflie using a Python workflow with PyTorch and cflib. I configured Lighthouse positioning with a SteamVR 2.0 base station to provide measurements for onboard state estimation. I then analyzed flight telemetry to investigate lateral drift and refine the controller gains for different phases of flight.</p>
+
+        <h4>Tools</h4>
+        <ul>
+          <li><strong>Simulation:</strong> Isaac Lab and a Crazyflie digital twin</li>
+          <li><strong>Control software:</strong> Python and PyTorch</li>
+          <li><strong>Flight commands and telemetry:</strong> cflib and Crazyradio</li>
+          <li><strong>Flight hardware:</strong> Bitcraze Crazyflie 2.1+ MAV</li>
+          <li><strong>Localization:</strong> Lighthouse positioning with a SteamVR 2.0 base station</li>
+        </ul>
+
+        <h4>Results</h4>
+
+        <p>I evaluated the cascaded PID controller across five Crazyflie hardware flights. The mission was to climb to 1 m, hover, fly forward 1 m, and land. The Crazyflie finished an average of 0.955 m forward of its starting point, 4.5 cm short of the target. The average of the five individual peak altitudes was 1.077 m, or 7.7 cm above the commanded height.</p>
+
+        <div class="table-scroll" tabindex="0" role="region" aria-labelledby="flight-results-caption">
+          <table>
+            <caption id="flight-results-caption">Results across five hardware flights</caption>
+            <thead>
+              <tr>
+                <th scope="col">Metric</th>
+                <th scope="col">Target</th>
+                <th scope="col">Mean</th>
+                <th scope="col">Standard deviation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Final forward displacement</th>
+                <td>1.000 m</td>
+                <td>0.955 m</td>
+                <td>0.064 m</td>
+              </tr>
+              <tr>
+                <th scope="row">Final lateral displacement</th>
+                <td>0.000 m</td>
+                <td>+0.017 m</td>
+                <td>0.137 m</td>
+              </tr>
+              <tr>
+                <th scope="row">Peak altitude above the starting position</th>
+                <td>1.000 m</td>
+                <td>1.077 m</td>
+                <td>0.016 m</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p><strong>What the flight logs showed.</strong> The mean lateral endpoint was only 1.7 cm from the centerline because flights drifted in both directions. Individual lateral endpoints ranged from −20.3 cm to +13.1 cm, and the average hardware trajectory deviated up to 27.5 cm from the centerline during the mission. Looking at the entire path showed where the controller needed improvement.</p>
+
+        <p><strong>Simulation versus hardware.</strong> The Isaac Lab run finished 1.000 m forward and showed no measurable lateral deviation in the archived comparison. The hardware mission took about 15 seconds, while the simulated mission took about 6 seconds. I expressed both trajectories relative to their starting positions and aligned the position plots by percentage of mission completed to compare path shape. The Isaac Lab comparison run used the custom EKF feedback option disabled.</p>
+
+        <h4>Flight position by axis</h4>
+        <p>Each plot compares the mean trajectory from five hardware flights with the Isaac Lab run. The horizontal axis shows progress from 0% to 100% of the mission.</p>
+
+        <figure>
+          <img src="comparison_x_position.png"
+               alt="Forward position over mission progress for the mean hardware trajectory and the Isaac Lab run.">
+          <figcaption><strong>X — Forward position.</strong> The hardware flights finished an average of 0.955 m forward, compared with 1.000 m in simulation.</figcaption>
+        </figure>
+
+        <figure>
+          <img src="comparison_y_position.png"
+               alt="Lateral position over mission progress showing the mean hardware trajectory drifting to either side of the simulated centerline.">
+          <figcaption><strong>Y — Lateral position.</strong> The mean hardware trajectory deviated up to 27.5 cm from the centerline during the mission and finished 1.7 cm to one side.</figcaption>
+        </figure>
+
+        <figure>
+          <img src="comparison_z_position.png"
+               alt="Vertical position over mission progress showing the climb and descent for hardware and simulation.">
+          <figcaption><strong>Z — Vertical position.</strong> The mean hardware trajectory peaked at 1.051 m. The 1.077 m in the results table is the average of the five individual flight peaks.</figcaption>
+        </figure>
+
+        <p><a href="https://youtu.be/XMFhNfYFFnY">Watch the Crazyflie flight demo on YouTube</a></p>
+
+        <h4>Next steps</h4>
+        <ul>
+          <li><strong>Compare EKF-enabled and EKF-disabled simulation runs.</strong>
+            Repeat the same flight sequence in Isaac Lab with the EKF option enabled.
+            Keep the reference trajectory, controller gains, and initial conditions
+            the same so I can isolate how EKF feedback affects tracking.</li>
+          <li><strong>Reduce lateral deviation.</strong>
+            Use the flight logs to identify when the Crazyflie starts drifting along
+            the Y axis. Refine the lateral controller and measure whether it reduces
+            both peak and RMS cross-track error across repeated flights.</li>
+          <li><strong>Improve the simulation-to-hardware comparison.</strong>
+            Use the same reference trajectory, coordinate convention, and metric
+            definitions in both tests. Compare position over elapsed time to assess
+            timing, and keep the mission-progress plots to compare path shape.</li>
+        </ul>
+      </article>
+
+      <article>
+        <h3>Crazyflie Reinforcement Learning in Isaac Lab</h3>
+
+        <p><strong>Goal.</strong> Evaluate how well reinforcement learning policies could hold a fixed hover and follow a moving reference trajectory on a simulated Crazyflie.</p>
+
+        <p><strong>Work.</strong> I trained and evaluated a PPO policy for fixed-position hover. In a separate trajectory-tracking experiment, I compared saved PPO, SAC, and TD3 policies across 64 simulated environments per policy. I used evaluator summaries and recorded rollouts to examine position error, command saturation, and low-altitude failure flags.</p>
+
+        <h4>Tools</h4>
+        <ul>
+          <li><strong>Simulation.</strong> NVIDIA Isaac Lab and a Crazyflie digital twin</li>
+          <li><strong>Training.</strong> Python, PyTorch, RSL-RL for hover, and skrl for trajectory tracking</li>
+          <li><strong>Analysis.</strong> TensorBoard, MCAP rollout logs, and evaluator summaries</li>
+        </ul>
+
+        <h4>Results</h4>
+
+        <p><strong>Fixed-position hover.</strong> The PPO policy achieved a 3D position
+          root mean square error (RMSE) of <strong>13.6 mm</strong> in a five-second,
+          fixed-start simulation test. The mean distance from the target at the end
+          of the test was 14.7 mm, and all 64 evaluation environments completed the
+          test without a crash flag.</p>
+
+        <p><a href="https://youtu.be/E2x5sey-9vE">Watch the PPO hover simulation</a></p>
+
+        <p><strong>Trajectory tracking.</strong> In a separate experiment, I evaluated
+          PPO, SAC, and TD3 on a moving reference trajectory. Each saved policy was
+          evaluated across 64 simulated environments using a 10-second evaluation
+          window.</p>
+
+        <div class="table-scroll" tabindex="0" role="region" aria-labelledby="rl-tracking-caption">
+          <table>
+            <caption id="rl-tracking-caption">Trajectory-tracking evaluation results</caption>
+            <thead>
+              <tr>
+                <th scope="col">Policy</th>
+                <th scope="col">Position RMSE</th>
+                <th scope="col">Command saturation</th>
+                <th scope="col">Environments with a crash flag</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">PPO</th><td>0.3402 m</td><td>1.3%</td><td>0 of 64</td></tr>
+              <tr><th scope="row">SAC</th><td>0.4601 m</td><td>98.6%</td><td>0 of 64</td></tr>
+              <tr><th scope="row">TD3</th><td>4.9301 m</td><td>100.0%</td><td>64 of 64</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p><strong>What the comparison showed.</strong> PPO had the lowest tracking
+          error among the tested policies. PPO and SAC both avoided the configured
+          low-altitude failure condition, but SAC operated at its command limits much
+          more often. Command saturation measures how often at least one normalized
+          command reached its limit. TD3 triggered the failure condition in every
+          evaluation environment.</p>
+
+        <figure>
+          <img src="algorithm_metrics_bar.png"
+               alt="Bar charts comparing trajectory tracking error, normalized command variation, crash fraction, and evaluation runtime for PPO, SAC, and TD3.">
+          <figcaption><strong>Policy comparison.</strong> PPO had the lowest tracking
+            error and lower command variation than SAC. The runtime panel shows how
+            long evaluation took.</figcaption>
+        </figure>
+
+        <figure>
+          <img src="trajectory_error_timeseries.png"
+               alt="Position error over the simulated tracking test, with PPO and SAC staying lower and TD3 showing repeated large error peaks.">
+          <figcaption><strong>Tracking error over time.</strong> The lines show mean
+            position error across environments, and the shaded bands show the spread
+            across those environments. Resets can cause sudden drops in the TD3 trace.</figcaption>
+        </figure>
+
+        <p><a href="https://youtu.be/P_8vcW-zk08">Watch the PPO trajectory-tracking simulation</a></p>
+
+        <p><strong>Scope.</strong> Hover and tracking were separate simulation tasks.
+          Each algorithm was trained with one seed, and training budgets and settings
+          differed. The comparison describes the saved policies under the tested
+          conditions.</p>
+
+        <h4>Next steps</h4>
+        <ul>
+          <li><strong>Diagnose the TD3 failures.</strong>
+            Review rollout logs leading up to low-altitude failures. Check when
+            control commands hit their limits and how resets affect the reference
+            trajectory. Retest TD3 after addressing the issues found in the logs.</li>
+          <li><strong>Repeat the three-policy comparison.</strong>
+            Train PPO, SAC, and TD3 across multiple random seeds with matched training
+            budgets. Evaluate them on the same reference trajectories and initial
+            conditions, then compare tracking error, command saturation, and failure rate.</li>
+          <li><strong>Prepare the strongest policy for an obstacle course.</strong>
+            Following the NVIDIA Physical AI Teaching Kit, test the selected policy
+            in simulation with varied starting positions, disturbances, and obstacle
+            layouts. Use those results to refine the policy before moving to a
+            controlled Crazyflie hardware trial.</li>
+        </ul>
+      </article>
+
+      <article>
+        <h3>Senior Design | Multi-MAV Cooperative Localization</h3>
+        <p>Team project · 2026–2027 · In progress</p>
+
+        <p><strong>Goal.</strong> Help three Crazyflie micro aerial vehicles
+          maintain formation using onboard relative measurements. The system
+          will use ultra-wideband (UWB) ranging, with Lighthouse providing an
+          independent position reference for evaluation.</p>
+
+        <p><strong>My role.</strong> I’m responsible for Subsystem B, the real-time
+          excitation monitor. It will use the smallest eigenvalue of a windowed
+          observability Gramian to assess whether recent flight motion provides
+          enough information for reliable cooperative localization. The monitor
+          will report when the motion provides too little information so the
+          formation controller can adjust its response.</p>
+
+        <h4>Progress</h4>
+        <ul>
+          <li><strong>Simulation.</strong> I adapted the previous team’s
+            leader–follower flight sequence for three physics-based Crazyflie
+            models in Isaac Lab. All three simulated vehicles completed the
+            sequence and landed. Position-tracking RMSE was 4.6 cm for the
+            leader and 7.4 cm and 7.6 cm for the followers. The inherited
+            cooperative EKF ran alongside the flight as an observer.</li>
+          <li><strong>Hardware.</strong> Our team adapted the formation software
+            for three Crazyflie 2.1 Brushless vehicles. After diagnosing and
+            replacing a motor that failed its spin-up check, we demonstrated
+            hover and triangle formation using Lighthouse positioning and
+            onboard state estimation.</li>
+        </ul>
+
+        <figure>
+          <img src="trajectory_comparison.png"
+               alt="Three-dimensional and top-down views of the leader and two follower trajectories in simulation.">
+          <figcaption>Three-drone formation simulation. Solid lines show the
+            Isaac Lab trajectories, and dashed lines show the kinematic baseline
+            using the same reference commands.</figcaption>
+        </figure>
+
+        <figure>
+          <img src="tracking_and_formation_error.png" loading="lazy"
+               alt="Two plots showing target-tracking error for all three simulated drones and formation error for the two followers over time.">
+          <figcaption>Isaac Lab tracking and formation error over time. The top
+            plot measures each drone’s distance from its position reference. The
+            bottom plot shows how far each follower deviated from its desired
+            offset relative to the leader’s measured position.</figcaption>
+        </figure>
+
+        <ul>
+          <li><a href="https://youtu.be/qxV2mLp4730">Watch the Isaac Lab formation simulation</a></li>
+          <li><a href="https://youtu.be/nAVloY5URWk">Watch the additional project demo</a></li>
+        </ul>
+
+        <h4>Next steps</h4>
+        <p>I’ll implement the excitation monitor, log its decisions during flight,
+          and test whether it distinguishes informative motion from degraded
+          conditions on held-out runs. Our team will then integrate the monitor
+          with UWB-based localization and the formation controller, using
+          Lighthouse measurements to evaluate the results.</p>
+      </article>
+
+      <article>
+        <h3>Vision-Based Robotic Manipulation | EE 4471</h3>
+        <p>Fall 2026 · Cal Poly San Luis Obispo</p>
+
+        <p><strong>Goal.</strong> Use camera measurements to determine where an
+          object is and move a physical robot arm to interact with it.</p>
+
+        <p><strong>Work.</strong> I worked with forward and inverse kinematics,
+          trajectory generation, and Jacobian-based velocity control. I used
+          AprilTags to calibrate the camera relative to the arm, then used OpenCV
+          to detect colored balls and transform their estimated 3D positions into
+          the robot’s coordinate frame. I compared depth-based and
+          perspective-n-point (PnP) localization and tested how damped least
+          squares affects joint velocity near a singularity.</p>
+
+        <figure>
+          <img src="lab11_configuration1.png"
+               alt="Camera view of the robot arm workspace with four colored balls marked by the detection software.">
+          <figcaption>Lab 11 color detection in the robot arm workspace. This
+            perception pipeline will supply grasp targets for the final sorting project.</figcaption>
+        </figure>
+
+        <figure>
+          <img src="lab10_x_tracking.png" loading="lazy"
+               alt="Time-series plots of desired and measured robot arm positions on the X, Y, and Z axes.">
+          <figcaption>Lab 10 visual servoing. Comparing the desired and measured
+            positions shows how the arm responded to target changes and where
+            its motion lagged.</figcaption>
+        </figure>
+
+        <figure>
+          <img src="lab12_3_reach_355_Comparison.png" loading="lazy"
+               alt="Plots comparing tip paths, commanded joint rates, and the smallest Jacobian singular value for two controllers near a singularity.">
+          <figcaption>Lab 12 singularity testing. I compared the Jacobian
+            pseudoinverse and damped least squares during a reach toward
+            355 mm, examining the tip path and commanded joint rates.</figcaption>
+        </figure>
+
+        <h4>Lab demos</h4>
+        <ul>
+          <li><a href="https://youtu.be/arf6Yyq6uPI">Lab 10 · Track a moving AprilTag with visual servoing</a></li>
+          <li><a href="https://youtu.be/pzO96gkbiK4">Lab 10 · Follow a rectangular path after PID tuning</a></li>
+          <li><a href="https://youtu.be/m36sEb6C9Dk">Lab 5 · Pick-and-place demonstration</a></li>
+          <li><a href="https://youtu.be/gTgRvUcZoZE">Lab 5 · Side-grasp a tall block and change gripper pitch</a></li>
+        </ul>
+
+        <h4>Next steps</h4>
+        <p><strong>Final project · Vision-guided pick-and-place sorting.</strong>
+          My team will integrate the calibrated vision pipeline with motion
+          planning and gripper control. The arm will detect and locate colored
+          balls, pick them up in priority order, and place them in matching bins.
+          We’ll start by testing a single camera-guided grasp, then test complete
+          sorting cycles and check whether the system resumes when a new ball
+          is added.</p>
+      </article>
+
+      <article>
+        <h3>Coming soon | Computer Vision for Autonomous Vehicles</h3>
+        <p>Planned for Spring 2027 · Cal Poly San Luis Obispo</p>
+        <p>I plan to take this course to build on my robotic manipulation work
+          and explore how autonomous vehicles use cameras to interpret their
+          surroundings. I’ll add the course project and its results here as
+          the work takes shape.</p>
+      </article>
+    </section>
+
+    <section>
+      <h2>Contact</h2>
+      <p><a href="https://www.linkedin.com/in/rafi-allen-2286662b4/">linkedin.com/in/rafi-allen-2286662b4</a></p>
+
+      <!-- Upload resume.pdf alongside index.html, then remove this comment around the link.
+      <p><a href="resume.pdf">View résumé</a></p>
+      -->
+    </section>
+  </main>
+</body>
+</html>
