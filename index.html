@@ -81,7 +81,6 @@
     <section>
       <h2>Projects</h2>
 
-      <!-- Copy the entire article block below for each additional project. -->
       <article>
         <h3>Crazyflie Flight Control: From Simulation to Hardware</h3>
         <p>Summer Undergraduate Research Program (SURP) · Cal Poly San Luis Obispo</p>
@@ -165,6 +164,24 @@
         </figure>
 
         <p><a href="https://youtu.be/XMFhNfYFFnY">Watch the Crazyflie flight demo on YouTube</a></p>
+
+        <h4>Next steps</h4>
+        <ul>
+          <li><strong>Compare EKF-enabled and EKF-disabled simulation runs.</strong>
+            Repeat the same flight sequence in Isaac Lab with the EKF option enabled.
+            Keep the reference trajectory, controller gains, and initial conditions
+            the same so I can isolate how EKF feedback affects tracking.</li>
+
+          <li><strong>Reduce lateral deviation.</strong>
+            Use the flight logs to identify when the Crazyflie starts drifting along
+            the Y axis. Refine the lateral controller and measure whether it reduces
+            both peak and RMS cross-track error across repeated flights.</li>
+
+          <li><strong>Improve the simulation-to-hardware comparison.</strong>
+            Use the same reference trajectory, coordinate convention, and metric
+            definitions in both tests. Compare position over elapsed time to assess
+            timing, and keep the mission-progress plots to compare path shape.</li>
+        </ul>
       </article>
 
       <article>
@@ -244,6 +261,25 @@
           Each algorithm was trained with one seed, and training budgets and settings
           differed. The comparison describes the saved policies under the tested
           conditions.</p>
+
+        <h4>Next steps</h4>
+        <ul>
+          <li><strong>Diagnose the TD3 failures.</strong>
+            Review the rollout logs leading up to each low-altitude failure. Check
+            when control commands hit their limits and how resets affect the reference
+            trajectory. Retest TD3 after addressing the issues found in the logs.</li>
+
+          <li><strong>Repeat the three-policy comparison.</strong>
+            Train PPO, SAC, and TD3 across multiple random seeds with matched training
+            budgets. Evaluate them on the same reference trajectories and initial
+            conditions, then compare tracking error, command saturation, and failure rate.</li>
+
+          <li><strong>Prepare the strongest policy for an obstacle course.</strong>
+            Following the NVIDIA Physical AI Teaching Kit, test the selected policy
+            in simulation with varied starting positions, disturbances, and obstacle
+            layouts. Use those results to refine the policy before moving to a
+            controlled Crazyflie hardware trial.</li>
+        </ul>
       </article>
     </section>
 
