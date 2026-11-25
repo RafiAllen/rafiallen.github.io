@@ -14,21 +14,56 @@
       font-family: system-ui, sans-serif;
       line-height: 1.6;
     }
-    h1, h2, h3 { line-height: 1.2; }
+
+    h1, h2, h3, h4 { line-height: 1.2; }
     h1 { margin-bottom: .25rem; }
     header p { margin-top: 0; }
     section { margin-top: 2.25rem; }
+
     article {
       margin-block: 1rem;
       padding: .25rem 1rem;
       border-left: 3px solid #327773;
       background: #fff;
     }
-    img { max-width: 100%; height: auto; }
+
+    a {
+      color: #205f5b;
+      overflow-wrap: anywhere;
+    }
+
+    .table-scroll {
+      margin-block: 1rem;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 28rem;
+      border-collapse: collapse;
+    }
+
+    caption {
+      padding-bottom: .5rem;
+      text-align: left;
+      font-weight: 650;
+    }
+
+    th, td {
+      padding: .5rem .65rem;
+      border-bottom: 1px solid #d6e0de;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    thead { background: #edf4f3; }
+    tbody td { white-space: nowrap; }
+    figure { margin: 1.25rem 0; }
+    img { display: block; max-width: 100%; height: auto; }
+    figcaption { margin-top: .5rem; font-size: .9rem; }
   </style>
 </head>
 <body>
-  <!-- Replace the text in square brackets with your own information. -->
   <header>
     <h1>Rafi Allen</h1>
     <p>Electrical Engineering · Robotics &amp; Controls</p>
@@ -37,32 +72,94 @@
   <main>
     <section>
       <h2>About me</h2>
-      <p>[Introduce yourself in two or three sentences. Include what you study, the work you enjoy, and the roles that interest you.]</p>
+
+      <p>Hello! My name is Rafi Allen, and I am a 4th-year student at California Polytechnic State University, San Luis Obispo, graduating with a B.S. in Electrical Engineering in May 2027. During my time at Cal Poly, I developed a strong interest in robotics, controls, and autonomous systems through coursework, projects, and research. Through my work, I have found that my favorite part of problem-solving is using theory to help guide my designs and solutions, then testing them on real hardware and refining them based on the results.</p>
+
+      <p>I like breaking down the problems I’m trying to solve, figuring out what should happen theoretically, and seeing results unfold, explaining what is happening during the test. If a MAV drifts when I expect it to fly straight, I want to know the causes and why that happens. That curiosity runs through all my projects, from testing flight controllers in simulation and on hardware to evaluating reinforcement learning policies, working on vision for a robotic arm, and developing an excitation monitor for multi-MAV cooperative localization. I’m interested in roles where I can build solutions, test them on real systems, and use the findings to tune and improve them.</p>
     </section>
 
     <section>
       <h2>Projects</h2>
 
-      <!-- Copy the entire article block below for each additional project. -->
+      <!-- Copy the entire article block for each additional project. -->
       <article>
-        <h3>[Project name]</h3>
-        <p><strong>Goal.</strong> [What problem were you trying to solve?]</p>
-        <p><strong>My contribution.</strong> [What did you personally design, implement, or test?]</p>
-        <p><strong>Tools.</strong> [List relevant software, hardware, or methods.]</p>
-        <p><strong>Result.</strong> [What did your tests show? Include a measurement or describe your current progress.]</p>
-        <!-- Optional photo. Upload project-photo.jpg alongside index.html, then move this line outside the comment and update the alt text.
-        <img src="project-photo.jpg" alt="[Describe what the photo shows.]">
+        <h3>Crazyflie Flight Control: From Simulation to Hardware</h3>
+        <p>Summer Undergraduate Research Program (SURP) · Cal Poly San Luis Obispo</p>
+
+        <p><strong>Goal.</strong> Take a controller tuned in simulation and test whether a physical Crazyflie could climb 1 meter, fly forward 1 meter, and land.</p>
+
+        <p><strong>Work.</strong> I developed and tuned a cascaded PID flight controller, building on an existing extended Kalman filter (EKF) and flight-tracking framework from prior research. In Isaac Lab, I used a digital twin of Bitcraze’s Crazyflie 2.1+ micro aerial vehicle (MAV) to test the full flight sequence: climb to 1 m, hover, fly forward 1 m, and land.</p>
+
+        <p>After the controller completed the sequence in simulation, I transferred the control logic to the physical Crazyflie using a Python workflow with PyTorch and cflib. I configured Lighthouse positioning with a SteamVR 2.0 base station to provide measurements for onboard state estimation. I then analyzed flight telemetry to investigate lateral drift and refine the controller gains for different phases of flight.</p>
+
+        <h4>Tools</h4>
+        <ul>
+          <li><strong>Simulation:</strong> Isaac Lab and a Crazyflie digital twin</li>
+          <li><strong>Control software:</strong> Python and PyTorch</li>
+          <li><strong>Flight commands and telemetry:</strong> cflib and Crazyradio</li>
+          <li><strong>Flight hardware:</strong> Bitcraze Crazyflie 2.1+ MAV</li>
+          <li><strong>Localization:</strong> Lighthouse positioning with a SteamVR 2.0 base station</li>
+        </ul>
+
+        <h4>Results</h4>
+
+        <p>I evaluated the cascaded PID controller across five Crazyflie hardware flights. The mission was to climb to 1 m, hover, fly forward 1 m, and land. The Crazyflie finished an average of 0.955 m forward of its starting point, 4.5 cm short of the target. The average of the five individual peak altitudes was 1.077 m, or 7.7 cm above the commanded height.</p>
+
+        <div class="table-scroll" tabindex="0" role="region" aria-labelledby="flight-results-caption">
+          <table>
+            <caption id="flight-results-caption">Results across five hardware flights</caption>
+            <thead>
+              <tr>
+                <th scope="col">Metric</th>
+                <th scope="col">Target</th>
+                <th scope="col">Mean</th>
+                <th scope="col">Standard deviation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Final forward displacement</th>
+                <td>1.000 m</td>
+                <td>0.955 m</td>
+                <td>0.064 m</td>
+              </tr>
+              <tr>
+                <th scope="row">Final lateral displacement</th>
+                <td>0.000 m</td>
+                <td>+0.017 m</td>
+                <td>0.137 m</td>
+              </tr>
+              <tr>
+                <th scope="row">Peak altitude above the starting position</th>
+                <td>1.000 m</td>
+                <td>1.077 m</td>
+                <td>0.016 m</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p><strong>What the flight logs showed.</strong> The mean lateral endpoint was only 1.7 cm from the centerline because flights drifted in both directions. Individual lateral endpoints ranged from −20.3 cm to +13.1 cm, and the average hardware trajectory deviated up to 27.5 cm from the centerline during the mission. Looking at the entire path showed where the controller needed improvement.</p>
+
+        <p><strong>Simulation versus hardware.</strong> The Isaac Lab run finished 1.000 m forward and showed no measurable lateral deviation in the archived comparison. The hardware mission took about 15 seconds, while the simulated mission took about 6 seconds. I expressed both trajectories relative to their starting positions and aligned the position plots by percentage of mission completed to compare path shape. The Isaac Lab comparison run used the custom EKF feedback option disabled.</p>
+
+        <!-- Upload comparison_xy_trajectory.png alongside index.html, then remove this comment around the figure.
+        <figure>
+          <img src="comparison_xy_trajectory.png"
+               alt="Top-down comparison showing lateral drift in the mean hardware flight path and a straight simulated path.">
+          <figcaption>Top-down view of the mean path from five hardware flights compared with the Isaac Lab run.</figcaption>
+        </figure>
         -->
-        <!-- Optional repository or demo. Move this line outside the comment and replace the URL.
-        <p><a href="https://example.com">View project</a></p>
-        -->
+
+        <p><a href="https://youtu.be/XMFhNfYFFnY">Watch the Crazyflie flight demo on YouTube</a></p>
       </article>
     </section>
 
     <section>
       <h2>Contact</h2>
-      <p>[Add your LinkedIn URL or a professional email address.]</p>
-      <!-- Optional résumé. Upload resume.pdf alongside index.html, then move this line outside the comment.
+      <p><a href="https://www.linkedin.com/in/rafi-allen-2286662b4/">linkedin.com/in/rafi-allen-2286662b4</a></p>
+
+      <!-- Upload resume.pdf alongside index.html, then remove this comment around the link.
       <p><a href="resume.pdf">View résumé</a></p>
       -->
     </section>
