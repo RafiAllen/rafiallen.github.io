@@ -166,6 +166,85 @@
 
         <p><a href="https://youtu.be/XMFhNfYFFnY">Watch the Crazyflie flight demo on YouTube</a></p>
       </article>
+
+      <article>
+        <h3>Crazyflie Reinforcement Learning in Isaac Lab</h3>
+
+        <p><strong>Goal.</strong> Evaluate how well reinforcement learning policies could hold a fixed hover and follow a moving reference trajectory on a simulated Crazyflie.</p>
+
+        <p><strong>Work.</strong> I trained and evaluated a PPO policy for fixed-position hover. In a separate trajectory-tracking experiment, I compared saved PPO, SAC, and TD3 policies across 64 simulated environments per policy. I used evaluator summaries and recorded rollouts to examine position error, command saturation, and low-altitude failure flags.</p>
+
+        <h4>Tools</h4>
+        <ul>
+          <li><strong>Simulation.</strong> NVIDIA Isaac Lab and a Crazyflie digital twin</li>
+          <li><strong>Training.</strong> Python, PyTorch, RSL-RL for hover, and skrl for trajectory tracking</li>
+          <li><strong>Analysis.</strong> TensorBoard, MCAP rollout logs, and evaluator summaries</li>
+        </ul>
+
+        <h4>Results</h4>
+
+        <p><strong>Fixed-position hover.</strong> The PPO policy achieved a 3D position
+          root mean square error (RMSE) of <strong>13.6 mm</strong> in a five-second,
+          fixed-start simulation test. The mean distance from the target at the end
+          of the test was 14.7 mm, and all 64 evaluation environments completed the
+          test without a crash flag.</p>
+
+        <p><a href="https://youtu.be/E2x5sey-9vE">Watch the PPO hover simulation</a></p>
+
+        <p><strong>Trajectory tracking.</strong> In a separate experiment, I evaluated
+          PPO, SAC, and TD3 on a moving reference trajectory. Each saved policy was
+          evaluated across 64 simulated environments using a 10-second evaluation
+          window.</p>
+
+        <div class="table-scroll" tabindex="0" role="region" aria-labelledby="rl-tracking-caption">
+          <table>
+            <caption id="rl-tracking-caption">Trajectory-tracking evaluation results</caption>
+            <thead>
+              <tr>
+                <th scope="col">Policy</th>
+                <th scope="col">Position RMSE</th>
+                <th scope="col">Command saturation</th>
+                <th scope="col">Environments with a crash flag</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">PPO</th><td>0.3402 m</td><td>1.3%</td><td>0 of 64</td></tr>
+              <tr><th scope="row">SAC</th><td>0.4601 m</td><td>98.6%</td><td>0 of 64</td></tr>
+              <tr><th scope="row">TD3</th><td>4.9301 m</td><td>100.0%</td><td>64 of 64</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p><strong>What the comparison showed.</strong> PPO had the lowest tracking
+          error among the tested policies. PPO and SAC both avoided the configured
+          low-altitude failure condition, but SAC operated at its command limits much
+          more often. Command saturation measures how often at least one normalized
+          command reached its limit. TD3 triggered the failure condition in every
+          evaluation environment.</p>
+
+        <figure>
+          <img src="algorithm_metrics_bar.png"
+               alt="Bar charts comparing trajectory tracking error, normalized command variation, crash fraction, and evaluation runtime for PPO, SAC, and TD3.">
+          <figcaption><strong>Policy comparison.</strong> PPO had the lowest tracking
+            error and lower command variation than SAC. The runtime panel shows how
+            long evaluation took.</figcaption>
+        </figure>
+
+        <figure>
+          <img src="trajectory_error_timeseries.png"
+               alt="Position error over the simulated tracking test, with PPO and SAC staying lower and TD3 showing repeated large error peaks.">
+          <figcaption><strong>Tracking error over time.</strong> The lines show mean
+            position error across environments, and the shaded bands show the spread
+            across those environments. Resets can cause sudden drops in the TD3 trace.</figcaption>
+        </figure>
+
+        <p><a href="https://youtu.be/P_8vcW-zk08">Watch the PPO trajectory-tracking simulation</a></p>
+
+        <p><strong>Scope.</strong> Hover and tracking were separate simulation tasks.
+          Each algorithm was trained with one seed, and training budgets and settings
+          differed. The comparison describes the saved policies under the tested
+          conditions.</p>
+      </article>
     </section>
 
     <section>
